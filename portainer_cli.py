@@ -9,6 +9,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from typing import Dict, Optional, Tuple
+from dotenv import load_dotenv
 
 class PortainerAPI:
     def __init__(self, base_url: str, verify_ssl: bool = False):
@@ -100,13 +101,13 @@ def main():
     parser.add_argument('--verify-ssl', action='store_true', help='Verify SSL certificate')
     args = parser.parse_args()
 
-    # Load environment variables if command line arguments are not provided
-    env_vars = load_env_file()
-    
-    url = args.url or env_vars.get('PORTAINER_URL')
-    username = args.username or env_vars.get('PORTAINER_USERNAME')
-    password = args.password or env_vars.get('PORTAINER_PASSWORD')
-    verify_ssl = args.verify_ssl or env_vars.get('PORTAINER_VERIFY_SSL', '').lower() == 'true'
+    # Load environment variables from .env file
+    load_dotenv()
+
+    url = args.url or os.getenv('PORTAINER_URL')
+    username = args.username or os.getenv('PORTAINER_USERNAME')
+    password = args.password or os.getenv('PORTAINER_PASSWORD')
+    verify_ssl = args.verify_ssl or os.getenv('PORTAINER_VERIFY_SSL', '').lower() == 'true'
 
     if not all([url, username, password]):
         print("Error: Missing required parameters. Please provide them via command line or .env file.")
